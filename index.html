@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+            <link rel="stylesheet" href="styles.css">
+            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+            <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-app.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-firestore.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-auth.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-database.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-storage.js"></script>
+            <script src="backend/fb.js"></script>
+            <title>Input date...</title>
+    </head>
+    <body>
+        <div id="date-form" class="date-container">
+            <label>Please input today's date.</label><br>
+            <input id="todays-date" type="date" class="form-control" seonclick="setTodaysDatlect-date"><br>
+            <button id="date-btn" class="btn btn-danger">Continue</button>
+        </div>
+        <script src="backend/date.js"></script>
+        <script type="text/javascript">
+            document.getElementById("date-btn").onclick=function(){
+                var tDate= $("#todays-date").val();
+                sessionStorage.setItem("todaysDate", tDate);
+                window.location.href="frontpage.html"
+            }
+        </script>
+    </body>
+</html>

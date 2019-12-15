@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-storage.js"></script>
+    <script src="backend/fb.js"></script>
+    <title>LAX Flights Status</title>
+    <nav class="navbar navbar-light" style="background-color: #14277e;">
+        <a class="navbar-brand" href="frontpage.html">
+            <img class="logo" src="images/logo.svg" alt="AirBook SVG" width="80" height="80" onerror="this.removeAttribute('onerror'); this.src='images/logo.svg'" />
+        </a>
+        <div class="logsign-container">
+            <a id="loginBtn" class="btn btn-danger" href="login.html">Login</a>
+            <a id="signupBtn" class="btn btn-danger" href="signup.html">Sign Up</a>
+            <button id="logoutBtn" class="btn btn-danger" onclick="logOutUser()">Log out</button>
+        </div>
+    </nav>
+</head>
+
+<body style="background: #f9f9f9">
+    <script>
+    //logs user out
+    function logOutUser() {
+        firebase.auth().signOut();
+        window.location.href = "frontpage.html"
+    }
+    //checks if user is logged in and diplays the buttons on the nav accordingly
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('signupBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'block';
+        } else {
+            document.getElementById('loginBtn').style.display = 'inline';
+            document.getElementById('signupBtn').style.display = 'inline';
+            document.getElementById('logoutBtn').style.display = 'none';
+        }
+    });
+
+    // Get current date
+
+    var date =sessionStorage.getItem("todaysDate");
+
+    // Display flights.json data into a table
+
+    $(document).ready(function() {
+        $.getJSON("flights.json", function(data) {
+            var departure_data = '';
+            var arrival_data = '';
+            var current_date = '';
+            $.each(data, function(key, flights) {
+                current_date += '<h2>' + date + '</h2>'
+                var updatedFlights=JSON.parse(localStorage.getItem("flights"));
+                // console.log(current_date)
+                for (var i = 0; i < updatedFlights.length; i++) {
+                    if (updatedFlights[i].sourceAirport == "LAX" && updatedFlights[i].date == date) {
+                        departure_data += '<tr>';
+                        departure_data += '<td>' + updatedFlights[i].airline + '</td>';
+                        departure_data += '<td>' + updatedFlights[i].departureTime + '</td>';
+                        departure_data += '<td>' + updatedFlights[i].destinationAirport + '</td>';
+                        departure_data += '<td>' + updatedFlights[i].gate + '</td>';
+                        if (updatedFlights[i].status === 'Boarding') {
+                            departure_data += '<td class="status">' + updatedFlights[i].status + '</td>';
+                        } else if (updatedFlights[i].status === 'On Time') {
+                            departure_data += '<td class="status onTime">' + updatedFlights[i].status + '</td>';
+                        } else if (updatedFlights[i].status === 'Delayed') {
+                            departure_data += '<td class="status delayed">' + updatedFlights[i].status + '</td>';
+                        } else {
+                            departure_data += '<td class="status cancelled">' + updatedFlights[i].status + '</td>';
+                        }
+                        departure_data += '</tr>';
+                    } else if (updatedFlights[i].destinationAirport == "LAX" && updatedFlights[i].date == date) {
+                        arrival_data += '<tr>';
+                        arrival_data += '<td>' + updatedFlights[i].airline + '</td>';
+                        arrival_data += '<td>' + updatedFlights[i].arrivalTime + '</td>';
+                        arrival_data += '<td>' + updatedFlights[i].sourceAirport + '</td>';
+                        arrival_data += '<td>' + updatedFlights[i].gate + '</td>';
+                        if (updatedFlights[i].status === 'Boarding') {
+                            arrival_data += '<td class="status">' + updatedFlights[i].status + '</td>';
+                        } else if (updatedFlights[i].status === 'On Time') {
+                            arrival_data += '<td class="status onTime">' + updatedFlights[i].status + '</td>';
+                        } else if (updatedFlights[i].status === 'Delayed') {
+                            arrival_data += '<td class="status delayed">' + updatedFlights[i].status + '</td>';
+                        } else {
+                            arrival_data += '<td class="status cancelled">' + updatedFlights[i].status + '</td>';
+                        }
+                        arrival_data += '</tr>';
+                    }
+                }
+            });
+            $('#departure-status').append(departure_data);
+            $('#arrival-status').append(arrival_data);
+            $('#current-date').append(current_date);
+        });
+    });
+    </script>
+    <div class="flightStatus">
+        <br />
+        <div id="current-date"></div>
+        <center>
+            <img src="./images/lax.jpg" width="200px" style="margin-bottom:15px">
+            <h1>Departure Flights Status</h1>
+            <table class="statusContainer" id="departure-status">
+                <thead>
+                    <tr>
+                        <th>Airline</th>
+                        <th>Departure Time</th>
+                        <th>Destination</th>
+                        <th>Gate</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+            </table>
+            <br />
+            <hr />
+            <br />
+            <h1>Arrival Flights Status</h1>
+            <table class="statusContainer" id="arrival-status">
+                <thead>
+                    <tr>
+                        <th>Airline</th>
+                        <th>arrival Time</th>
+                        <th>Origin</th>
+                        <th>Gate</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+            </table>
+        </center>
+    </div>
+</body>
+
+</html>
