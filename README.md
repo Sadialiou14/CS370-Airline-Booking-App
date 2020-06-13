@@ -1,4 +1,7 @@
 # cs370-airline-booking
+
+view site at https://sadialiou14.github.io/CS370-Airline-Booking-App/
+
 Airline booking system for CS370.
 Plan: Using HTML/CSS/JS for frontend, using firebase for DB, and using JSON for backend.
 
